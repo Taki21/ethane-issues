@@ -1,19 +1,17 @@
 import { Inter } from 'next/font/google'
 import { Wallet } from './Wallet'
-import { ECDSAProvider } from '@zerodev/sdk'
-import { convertWalletClientToAccountSigner } from '@zerodev/sdk'
-import { useWalletClient } from 'wagmi'
+import { ECDSAProvider, getRPCProviderOwner } from '@zerodev/sdk'
+import { ZeroDevWeb3Auth } from '@zerodev/web3auth';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
 
-  const { data: walletClient } = useWalletClient()
-
   async function sendEther() {
+    const zeroDevWeb3Auth = ZeroDevWeb3Auth.getInstance([process.env.REACT_APP_ZERODEV_PROJECT_ID || 'b5486fa4-e3d9-450b-8428-646e757c10f6'])
     const ecdsaProvider = await ECDSAProvider.init({
-        projectId: '', // <<< ZeroDev Project ID here
-        owner: convertWalletClientToAccountSigner(walletClient)
+        projectId: 'b5486fa4-e3d9-450b-8428-646e757c10f6',
+        owner: getRPCProviderOwner(zeroDevWeb3Auth.provider)
     })
     
     const txn = await ecdsaProvider.sendUserOperation([

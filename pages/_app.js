@@ -1,10 +1,9 @@
 import '@/styles/globals.css'
-
 import '@rainbow-me/rainbowkit/styles.css';
+
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { mainnet } from 'wagmi/chains'
-import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
-import { enhanceWalletWithAAConnector } from '@zerodev/wagmi/rainbowkit'
+import { polygonMumbai } from 'wagmi/chains'
+import { publicProvider } from 'wagmi/providers/public'
 import { 
   googleWallet,
   facebookWallet,
@@ -19,36 +18,35 @@ import { connectorsForWallets, RainbowKitProvider, darkTheme } from '@rainbow-me
 
 function MyApp({ Component, pageProps }) {
 
-  const zd_id = ''
-  const wc_project_id = ''
+  const zd_id = 'b5486fa4-e3d9-450b-8428-646e757c10f6'
   const infura = ''
 
-  const allowedChains = [mainnet]
+  const allowedChains = [polygonMumbai]
 
+  const { chains, publicClient, webSocketPublicClient } = configureChains(
+    allowedChains,
+    [publicProvider()]
+  )
+  
   const connectors = connectorsForWallets([
     {
       groupName: 'Providers',
       wallets: [
-        googleWallet({chains: allowedChains, options: { projectId: zd_id }}),
-        enhanceWalletWithAAConnector(
-          metaMaskWallet({ chains: [mainnet], projectId: wc_project_id }),
-          { projectId: zd_id }
-        ),
-        facebookWallet({chains: allowedChains, options: { projectId: zd_id }}),
-        githubWallet({chains: allowedChains, options: { projectId: zd_id }}),
-        discordWallet({chains: allowedChains, options: { projectId: zd_id }}),
-        twitterWallet({chains: allowedChains, options: { projectId: zd_id }}),
+        googleWallet({chains: chains, options: { projectId: zd_id }}),
+        // enhanceWalletWithAAConnector(
+        //   metaMaskWallet({ chains: [polygonMumbai], projectId: wc_project_id }),
+        //   { projectId: zd_id }
+        // ),
+        facebookWallet({chains: chains, options: { projectId: zd_id }}),
+        githubWallet({chains: chains, options: { projectId: zd_id }}),
+        discordWallet({chains: chains, options: { projectId: zd_id }}),
+        twitterWallet({chains: chains, options: { projectId: zd_id }}),
       ],
     },
   ]);
 
-  const { chains, publicClient, webSocketPublicClient } = configureChains(
-    allowedChains,
-    [infuraProvider({apiKey: infura})],
-  )
-
   const config = createConfig({
-    autoConnect: true,
+    autoConnect: false,
     connectors,
     publicClient,
     webSocketPublicClient,
